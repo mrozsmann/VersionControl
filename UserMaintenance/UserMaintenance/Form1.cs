@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using UserMaintenance.Entities;
+using System.IO;
 
 namespace UserMaintenance
 {
@@ -28,11 +29,35 @@ namespace UserMaintenance
 
         private void button1_Click(object sender, EventArgs e)
         {
-            var u = new User()
-            {
-                FullName = label1.Text,
-            };
+            var u = new User();
+            u.FullName = label1.Text;
             users.Add(u);
+
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog sfd = new SaveFileDialog();
+            sfd.InitialDirectory = Application.StartupPath;
+            sfd.Filter = "Comma Seperated Values (.csv)|.csv";
+            sfd.DefaultExt = "csv";
+            sfd.AddExtension = true;
+            if (sfd.ShowDialog() != DialogResult.OK)
+            {
+                return;
+            }
+
+            using (StreamWriter sw = new StreamWriter(sfd.FileName, false, Encoding.UTF8))
+            {
+                foreach (var item in users)
+                {
+                    sw.Write(item.ID);
+                    sw.Write(";");
+                    sw.Write(item.FullName);
+                    sw.WriteLine();
+                }
+            }
+        }
+
     }
 }
